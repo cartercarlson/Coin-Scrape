@@ -127,8 +127,8 @@ df2 = pd.DataFrame(
 try:
 	df1 = pd.read_csv('data.csv')
 	df1 = df1.append(df2)
-	df1.to_csv('data.csv')
+	df1.to_csv('data.csv', index=False)
 except:
-	df2.to_csv('data.csv')
+	df2.to_csv('data.csv', index=False)
 
 driver.close()
