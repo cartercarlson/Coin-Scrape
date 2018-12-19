@@ -24,6 +24,8 @@ def clean_dollar(string):
 
 
 def clean_percent(string):
+	if not string:
+		return string
 	string = string.replace('%','')
 	return float(string)
 
