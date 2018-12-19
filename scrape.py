@@ -86,10 +86,10 @@ for row in results:
 	hour_sent = row.find_element_by_xpath('td[16]').text
 	hour_sent = float(hour_sent[:hour_sent.find(' ')])
 	# Hr price prediction
-	hour_pred = row.find_element_by_xpath('td[22]').text
+	hour_pred = row.find_element_by_xpath('td[23]').text
 	hour_pred = clean_percent(hour_pred)
 	# Accuracy
-	accuracy = row.find_element_by_xpath('td[24]').text
+	accuracy = row.find_element_by_xpath('td[25]').text
 	accuracy = clean_percent(accuracy)
 
 	df2.append([
