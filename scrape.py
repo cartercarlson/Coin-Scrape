@@ -18,14 +18,14 @@ accuracy
 '''
 
 def clean_dollar(string):
-	string = string.replace('$', '')
-	string = string.replace(',', '')
-	return float(string)
+    string = string.replace('$', '')
+    string = string.replace(',', '')
+    return float(string)
 
 
 def clean_percent(string):
-	string = string.replace('%','')
-	return float(string)
+    string = string.replace('%','')
+    return float(string)
 
 
 chrome_options = Options()
@@ -64,71 +64,71 @@ results = driver.find_elements_by_xpath('//tbody[@aria-live="polite"]/tr[@class=
 
 for row in results:
 
-	# Coin symbol
-	symbol = row.find_element_by_xpath('td[2]').text
-	# Coin name
-	name = row.find_element_by_xpath('td[3]').text
-	# mcap
-	mcap = row.find_element_by_xpath('td[4]').text
-	mcap = clean_dollar(mcap)
-	# price
-	price = row.find_element_by_xpath('td[5]').text
-	# 24hr change
-	day_change = row.find_element_by_xpath('td[6]').text
-	day_change = clean_percent(day_change)
-	# 1hr change
-	hour_change = row.find_element_by_xpath('td[7]').text
-	hour_change = clean_percent(hour_change)
-	# volume
-	volume = row.find_element_by_xpath('td[10]').text
-	volume = clean_dollar(volume)
-	# hourly sentiment
-	hour_sent = row.find_element_by_xpath('td[16]').text
-	hour_sent = float(hour_sent[:hour_sent.find(' ')])
-	# Hr price prediction
-	hour_pred = row.find_element_by_xpath('td[22]').text
-	hour_pred = clean_percent(hour_pred)
-	# Accuracy
-	accuracy = row.find_element_by_xpath('td[24]').text
-	accuracy = clean_percent(accuracy)
+    # Coin symbol
+    symbol = row.find_element_by_xpath('td[2]').text
+    # Coin name
+    name = row.find_element_by_xpath('td[3]').text
+    # mcap
+    mcap = row.find_element_by_xpath('td[4]').text
+    mcap = clean_dollar(mcap)
+    # price
+    price = row.find_element_by_xpath('td[5]').text
+    # 24hr change
+    day_change = row.find_element_by_xpath('td[6]').text
+    day_change = clean_percent(day_change)
+    # 1hr change
+    hour_change = row.find_element_by_xpath('td[7]').text
+    hour_change = clean_percent(hour_change)
+    # volume
+    volume = row.find_element_by_xpath('td[10]').text
+    volume = clean_dollar(volume)
+    # hourly sentiment
+    hour_sent = row.find_element_by_xpath('td[16]').text
+    hour_sent = float(hour_sent[:hour_sent.find(' ')])
+    # Hr price prediction
+    hour_pred = row.find_element_by_xpath('td[22]').text
+    hour_pred = clean_percent(hour_pred)
+    # Accuracy
+    accuracy = row.find_element_by_xpath('td[24]').text
+    accuracy = clean_percent(accuracy)
 
-	df2.append([
-				datetime.now(),
-				symbol,
-				name,
-				mcap,
-				price,
-				day_change,
-				hour_change,
-				volume,
-				hour_sent,
-				hour_pred,
-				accuracy
-	])
+    df2.append([
+		datetime.now(),
+		symbol,
+		name,
+		mcap,
+		price,
+		day_change,
+		hour_change,
+		volume,
+		hour_sent,
+		hour_pred,
+		accuracy
+    ])
 
 # ------------------
 df2 = pd.DataFrame(
-		df2,
-		columns=[
-				 'date',
-				 'symbol',
-				 'name',
-				 'mcap',
-				 'price',
-				 'day_change',
-				 'hour_change',
-				 'volume',
-				 'hour_sent',
-				 'hour_pred',
-				 'accuracy'
-				 ]
-	)
+    f2,
+    columns=[
+	     'date',
+	     'symbol',
+	     'name',
+	     'mcap',
+	     'price',
+	     'day_change',
+	     'hour_change',
+	     'volume',
+	     'hour_sent',
+	     'hour_pred',
+	     'accuracy'
+    ]
+)
 
 try:
-	df1 = pd.read_csv('data.csv')
-	df1 = df1.append(df2)
-	df1.to_csv('data.csv')
+    df1 = pd.read_csv('data.csv')
+    df1 = df1.append(df2)
+    df1.to_csv('data.csv')
 except:
-	df2.to_csv('data.csv')
+    df2.to_csv('data.csv')
 
 driver.close()
