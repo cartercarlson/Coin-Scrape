@@ -1,9 +1,10 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-import pandas as pd
 import os
 from datetime import datetime
 from time import sleep
+import pandas as pd
+from selenium.webdriver.chrome.options import Options
+
 
 '''
 Name
@@ -24,8 +25,11 @@ def clean_dollar(string):
 
 
 def clean_percent(string):
-    string = string.replace('%','')
-    return float(string)
+	if not string:
+		return string
+	string = string.replace('%','')
+	return float(string)
+
 
 
 chrome_options = Options()
@@ -57,59 +61,7 @@ test = driver.find_element_by_xpath('//td[@data-column="15"]/div/input')
 test.send_keys('75')
 sleep(2)
 
-df2 = []
-
-# Coins displayed
-results = driver.find_elements_by_xpath('//tbody[@aria-live="polite"]/tr[@class=""]')
-
-for row in results:
-
-    # Coin symbol
-    symbol = row.find_element_by_xpath('td[2]').text
-    # Coin name
-    name = row.find_element_by_xpath('td[3]').text
-    # mcap
-    mcap = row.find_element_by_xpath('td[4]').text
-    mcap = clean_dollar(mcap)
-    # price
-    price = row.find_element_by_xpath('td[5]').text
-    # 24hr change
-    day_change = row.find_element_by_xpath('td[6]').text
-    day_change = clean_percent(day_change)
-    # 1hr change
-    hour_change = row.find_element_by_xpath('td[7]').text
-    hour_change = clean_percent(hour_change)
-    # volume
-    volume = row.find_element_by_xpath('td[10]').text
-    volume = clean_dollar(volume)
-    # hourly sentiment
-    hour_sent = row.find_element_by_xpath('td[16]').text
-    hour_sent = float(hour_sent[:hour_sent.find(' ')])
-    # Hr price prediction
-    hour_pred = row.find_element_by_xpath('td[22]').text
-    hour_pred = clean_percent(hour_pred)
-    # Accuracy
-    accuracy = row.find_element_by_xpath('td[24]').text
-    accuracy = clean_percent(accuracy)
-
-    df2.append([
-		datetime.now(),
-		symbol,
-		name,
-		mcap,
-		price,
-		day_change,
-		hour_change,
-		volume,
-		hour_sent,
-		hour_pred,
-		accuracy
-    ])
-
-# ------------------
-df2 = pd.DataFrame(
-    f2,
-    columns=[
+df2 = pd.DataFrame(columns=[
 	     'date',
 	     'symbol',
 	     'name',
@@ -120,15 +72,63 @@ df2 = pd.DataFrame(
 	     'volume',
 	     'hour_sent',
 	     'hour_pred',
-	     'accuracy'
-    ]
-)
+	     'accuracy')
+])
+
+# Coins displayed
+results = driver.find_elements_by_xpath('//tbody[@aria-live="polite"]/tr[@class=""]')
+
+for row in results:
+
+	# Coin symbol
+	symbol = row.find_element_by_xpath('td[2]').text
+	# Coin name
+	name = row.find_element_by_xpath('td[3]').text
+	# mcap
+	mcap = row.find_element_by_xpath('td[4]').text
+	mcap = clean_dollar(mcap)
+	# price
+	price = row.find_element_by_xpath('td[5]').text
+	# 24hr change
+	day_change = row.find_element_by_xpath('td[6]').text
+	day_change = clean_percent(day_change)
+	# 1hr change
+	hour_change = row.find_element_by_xpath('td[7]').text
+	hour_change = clean_percent(hour_change)
+	# volume
+	volume = row.find_element_by_xpath('td[10]').text
+	volume = clean_dollar(volume)
+	# hourly sentiment
+	hour_sent = row.find_element_by_xpath('td[16]').text
+	hour_sent = float(hour_sent[:hour_sent.find(' ')])
+	# Hr price prediction
+	hour_pred = row.find_element_by_xpath('td[23]').text
+	hour_pred = clean_percent(hour_pred)
+	# Accuracy
+	accuracy = row.find_element_by_xpath('td[25]').text
+	accuracy = clean_percent(accuracy)
+
+  df2.append({
+    'date': datetime.now(),
+    'symbol': symbol,
+    'name': name,
+    'mcap': mcap,
+    'price': price,
+    'day_change': day_change,
+    'hour_change': hour_change,
+    'volume': volume,
+    'hour_sent': hour_sent,
+    'hour_pred': hour_pred,
+    'accuracy': accuracy
+  })
 
 try:
-    df1 = pd.read_csv('data.csv')
-    df1 = df1.append(df2)
-    df1.to_csv('data.csv')
+	
+  1 = pd.read_csv('data.csv')
+	df1 = df1.append(df2)
+	df1.to_csv('data.csv', index=False)
 except:
-    df2.to_csv('data.csv')
+	df2.to_csv('data.csv', index=False)
+
 
 driver.close()
