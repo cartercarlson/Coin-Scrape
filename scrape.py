@@ -1,9 +1,10 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-import pandas as pd
 import os
 from datetime import datetime
 from time import sleep
+import pandas as pd
+from selenium.webdriver.chrome.options import Options
+
 
 '''
 Name
@@ -18,9 +19,9 @@ accuracy
 '''
 
 def clean_dollar(string):
-	string = string.replace('$', '')
-	string = string.replace(',', '')
-	return float(string)
+    string = string.replace('$', '')
+    string = string.replace(',', '')
+    return float(string)
 
 
 def clean_percent(string):
@@ -28,6 +29,7 @@ def clean_percent(string):
 		return string
 	string = string.replace('%','')
 	return float(string)
+
 
 
 chrome_options = Options()
@@ -59,7 +61,19 @@ test = driver.find_element_by_xpath('//td[@data-column="15"]/div/input')
 test.send_keys('75')
 sleep(2)
 
-df2 = []
+df2 = pd.DataFrame(columns=[
+	     'date',
+	     'symbol',
+	     'name',
+	     'mcap',
+	     'price',
+	     'day_change',
+	     'hour_change',
+	     'volume',
+	     'hour_sent',
+	     'hour_pred',
+	     'accuracy')
+])
 
 # Coins displayed
 results = driver.find_elements_by_xpath('//tbody[@aria-live="polite"]/tr[@class=""]')
@@ -94,43 +108,27 @@ for row in results:
 	accuracy = row.find_element_by_xpath('td[25]').text
 	accuracy = clean_percent(accuracy)
 
-	df2.append([
-				datetime.now(),
-				symbol,
-				name,
-				mcap,
-				price,
-				day_change,
-				hour_change,
-				volume,
-				hour_sent,
-				hour_pred,
-				accuracy
-	])
-
-# ------------------
-df2 = pd.DataFrame(
-		df2,
-		columns=[
-				 'date',
-				 'symbol',
-				 'name',
-				 'mcap',
-				 'price',
-				 'day_change',
-				 'hour_change',
-				 'volume',
-				 'hour_sent',
-				 'hour_pred',
-				 'accuracy'
-				 ]
-	)
+  df2.append({
+    'date': datetime.now(),
+    'symbol': symbol,
+    'name': name,
+    'mcap': mcap,
+    'price': price,
+    'day_change': day_change,
+    'hour_change': hour_change,
+    'volume': volume,
+    'hour_sent': hour_sent,
+    'hour_pred': hour_pred,
+    'accuracy': accuracy
+  })
 
 try:
-	df1 = pd.read_csv('data.csv')
+	
+  1 = pd.read_csv('data.csv')
 	df1 = df1.append(df2)
 	df1.to_csv('data.csv', index=False)
 except:
 	df2.to_csv('data.csv', index=False)
+
 
 driver.close()
